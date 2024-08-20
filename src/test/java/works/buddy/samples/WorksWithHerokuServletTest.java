@@ -36,6 +36,6 @@ public class WorksWithHerokuServletTest {
         when(response.getWriter()).thenReturn(writer);
 
         servlet.doGet(request, response);
-        assertEquals("Buddy Works with Heroku", new String( out.toByteArray(), "UTF-8"));
+        assertEquals("Buddy Works with Heroku hello komal", new String( out.toByteArray(), "UTF-8"));
     }
 }
