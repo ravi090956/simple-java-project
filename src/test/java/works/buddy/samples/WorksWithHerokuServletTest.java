@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
@@ -36,9 +36,8 @@ public class WorksWithHerokuServletTest {
         when(response.getWriter()).thenReturn(writer);
 
         servlet.doGet(request, response);
-        writer.flush(); // Ensure output is written
+        writer.flush();
 
-        // Adjust expected value to match duplicate prints
         assertEquals("Buddy Works with HerokuBuddy Works with Heroku", new String(out.toByteArray(), "UTF-8"));
     }
 }
