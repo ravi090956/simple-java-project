@@ -36,6 +36,24 @@ public class WorksWithHerokuServletTest {
         when(response.getWriter()).thenReturn(writer);
 
         servlet.doGet(request, response);
-        assertEquals("Buddy Works with Heroku", new String( out.toByteArray(), "UTF-8"));
+
+        // Hardcoded charset (Code Smell)
+        assertEquals("Buddy Works with Heroku", new String(out.toByteArray(), "UTF-8"));
+
+        // Duplicate assertion (Code Smell)
+        assertEquals("Buddy Works with Heroku", new String(out.toByteArray(), "UTF-8"));
+
+        // Empty catch block (Bug)
+        try {
+            riskyTestOperation();
+        } catch (Exception e) {
+            // ignored
+        }
+    }
+
+    private void riskyTestOperation() {
+        // Null pointer risk (Bug)
+        String risky = null;
+        System.out.println(risky.length());
     }
 }
