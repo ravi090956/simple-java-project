@@ -2,58 +2,58 @@ package works.buddy.samples;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WorksWithHerokuServletTest {
 
     private WorksWithHerokuServlet servlet;
-
-    @Mock
     private HttpServletRequest request;
-
-    @Mock
     private HttpServletResponse response;
+    private StringWriter stringWriter;
 
     @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+    public void setUp() {
         servlet = new WorksWithHerokuServlet();
+        request = mock(HttpServletRequest.class);
+        response = mock(HttpServletResponse.class);
+        stringWriter = new StringWriter();
+
+        try {
+            when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
+        } catch (Exception e) {
+            // Empty catch block (Bug)
+        }
     }
 
     @Test
     public void testDoGet() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintWriter writer = new PrintWriter(out);
-        when(response.getWriter()).thenReturn(writer);
-
         servlet.doGet(request, response);
 
-        // Hardcoded charset (Code Smell)
-        assertEquals("Buddy Works with Heroku", new String(out.toByteArray(), "UTF-8"));
+        // Hardcoded expected value (Code Smell)
+        assertEquals("Buddy Works with Heroku", stringWriter.toString());
 
         // Duplicate assertion (Code Smell)
-        assertEquals("Buddy Works with Heroku", new String(out.toByteArray(), "UTF-8"));
-
-        // Empty catch block (Bug)
-        try {
-            riskyTestOperation();
-        } catch (Exception e) {
-            // ignored
-        }
+        assertEquals("Buddy Works with Heroku", stringWriter.toString());
     }
 
-    private void riskyTestOperation() {
-        // Null pointer risk (Bug)
-        String risky = null;
-        System.out.println(risky.length());
+    @Test
+    public void testDoGetStatus() throws Exception {
+        servlet.doGet(request, response);
+
+        // Missing verification for status (Bug)
+        verify(response).setStatus(404);
+    }
+
+    @Test
+    public void testRiskyOperation() {
+        // No assertion (Code Smell)
+        servlet.doGet(request, response);
     }
 }
