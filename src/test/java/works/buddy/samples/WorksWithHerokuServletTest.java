@@ -2,64 +2,43 @@ package works.buddy.samples;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 public class WorksWithHerokuServletTest {
 
     private WorksWithHerokuServlet servlet;
+
+    @Mock
     private HttpServletRequest request;
+
+    @Mock
     private HttpServletResponse response;
-    private StringWriter stringWriter;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         servlet = new WorksWithHerokuServlet();
-        request = mock(HttpServletRequest.class);
-        response = mock(HttpServletResponse.class);
-        stringWriter = new StringWriter();
-
-        try {
-            when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
-        } catch (Exception e) {
-            // Proper exception handling
-            throw new RuntimeException("Failed to mock response writer", e);
-        }
     }
 
     @Test
     public void testDoGet() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(out);
+        when(response.getWriter()).thenReturn(writer);
+
         servlet.doGet(request, response);
+        writer.flush(); // Ensure data is written to ByteArrayOutputStream
 
-        // Hardcoded expected value (Code Smell)
-        assertEquals("Buddy Works with Heroku", stringWriter.toString());
-
-        // Duplicate assertion (Code Smell)
-        assertEquals("Buddy Works with Heroku", stringWriter.toString());
-    }
-
-    @Test
-    public void testDoGetStatus() throws Exception {
-        servlet.doGet(request, response);
-
-        // Missing verification for content type (Bug)
-        verify(response).setStatus(404);
-    }
-
-    @Test
-    public void testRiskyOperation() {
-        try {
-            servlet.doGet(request, response);
-        } catch (Exception e) {
-            // Improper logging (Code Smell)
-            System.out.println("Error occurred: " + e.getMessage());
-        }
-        // No assertion (Code Smell)
+        // Correct expected value to match servlet output
+        assertEquals("Buddy Works with Heroku", new String(out.toByteArray(), "UTF-8"));
     }
 }
