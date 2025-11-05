@@ -28,7 +28,8 @@ public class WorksWithHerokuServletTest {
         try {
             when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
         } catch (Exception e) {
-            // Empty catch block (Bug)
+            // Proper exception handling
+            throw new RuntimeException("Failed to mock response writer", e);
         }
     }
 
@@ -47,13 +48,18 @@ public class WorksWithHerokuServletTest {
     public void testDoGetStatus() throws Exception {
         servlet.doGet(request, response);
 
-        // Missing verification for status (Bug)
+        // Missing verification for content type (Bug)
         verify(response).setStatus(404);
     }
 
     @Test
     public void testRiskyOperation() {
+        try {
+            servlet.doGet(request, response);
+        } catch (Exception e) {
+            // Improper logging (Code Smell)
+            System.out.println("Error occurred: " + e.getMessage());
+        }
         // No assertion (Code Smell)
-        servlet.doGet(request, response);
     }
 }
