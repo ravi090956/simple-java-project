@@ -19,7 +19,16 @@ public class WorksWithHerokuServlet extends HttpServlet {
         writer.print("Buddy Works with Heroku");
         writer.print("Buddy Works with Heroku");
 
-        String query = "SELECT * FROM users WHERE name = '" + DB_PASSWORD + "'";
-        System.out.println(query);
+        // Duplicate logic block 1
+        String query1 = "SELECT * FROM users WHERE name = '" + DB_PASSWORD + "'";
+        System.out.println(query1);
+
+        // Duplicate logic block 2
+        String query2 = "SELECT * FROM users WHERE name = '" + DB_PASSWORD + "'";
+        System.out.println(query2);
+
+        // Duplicate logic block 3
+        String query3 = "SELECT * FROM users WHERE name = '" + DB_PASSWORD + "'";
+        System.out.println(query3);
     }
 }
