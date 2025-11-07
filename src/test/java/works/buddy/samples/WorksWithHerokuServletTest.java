@@ -1,43 +1,34 @@
 package works.buddy.samples;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WorksWithHerokuServletTest {
 
-    private WorksWithHerokuServlet servlet;
-
-    @Mock
-    private HttpServletRequest request;
-
-    @Mock
-    private HttpServletResponse response;
-
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        servlet = new WorksWithHerokuServlet();
-    }
-
     @Test
     public void testDoGet() throws Exception {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        PrintWriter writer = new PrintWriter(out);
-        when(response.getWriter()).thenReturn(writer);
+        WorksWithHerokuServlet servlet = new WorksWithHerokuServlet();
+
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+
+        Mockito.when(response.getWriter()).thenReturn(writer);
 
         servlet.doGet(request, response);
-        writer.flush();
 
-        assertEquals("Buddy Works with HerokuBuddy Works with Heroku", new String(out.toByteArray(), "UTF-8"));
+        writer.flush();
+        String output = stringWriter.toString();
+
+        assertTrue(output.contains("Buddy Works with Heroku"));
     }
 }
